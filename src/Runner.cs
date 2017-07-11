@@ -180,15 +180,13 @@ namespace AWSLambdaLogParser
             foreach (var item in list)
             {
                 try {
-                    if (item == null)
-                        continue;
                     var timestamp = item.FirstOrDefault(i => i.Item1 == "@timestamp");
                     if (timestamp == null)
                         continue;
-                    if (DateTime.TryParse(timestamp.Item2.ToString(), out DateTime dateTime) || 
-                        dateTime == null)
+
+                    var dateString = DateTime.Parse(timestamp.Item2.ToString()).ToString("yyyy.MM.dd");
+                    if (dateString == null)
                         continue;
-                    var dateString = dateTime.ToString("yyyy.MM.dd");
                     count++;
                     bulkRequest.Index<object>(i => i
                         .Index($"logstash-{indexPrefix}-{dateString}")
